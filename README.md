@@ -24,8 +24,8 @@ int main()
 		std::cout << s << endl;
 	};
 
-    Thread::thread_pool tp(2);
-    tp.start(); 
+	Thread::thread_pool tp(2);
+	tp.start(); 
 	for (int i = 0; i < 10; ++i) {
 		tp.add_one_task(func, i);
 	}
