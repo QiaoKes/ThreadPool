@@ -8,5 +8,32 @@
 **样例:**  
 
 ```C++
+#include <iostream>
+#include<functional>
+#include<string>
+#include "ThreadPool.h"
+using namespace std;
+
+
+int main()
+{
+	int n = 10;
+	auto func = [&n](int i) {
+		n += 10;
+		string s = "func: " + to_string(i) + " " + to_string(n);
+		std::cout << s << endl;
+	};
+
+    Thread::thread_pool tp(2);
+    tp.start(); 
+	for (int i = 0; i < 10; ++i) {
+		tp.add_one_task(func, i);
+	}
+	cout << "add task done" << endl;
+	std::this_thread::sleep_for(2s);
+	
+	tp.stop();
+	return 0;
+}
 
 ```  
