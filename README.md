@@ -9,8 +9,8 @@
 
 ```C++
 #include <iostream>
-#include<functional>
-#include<string>
+#include <functional>
+#include <string>
 #include "ThreadPool.h"
 using namespace std;
 
