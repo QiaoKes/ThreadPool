@@ -139,3 +139,33 @@ int main()
 [2020-08-04 14:08:46][Debug]    this is debug level test finished
 [2020-08-04 14:08:46][Info]     this is Info level test finished
 ```
+
+**实现自己的日志类:**
+```C++
+#pragma once
+#ifndef _PROJECT_MY_LOGGER_H_
+#define _PROJECT_MY_LOGGER_H_
+#include "logger.h"
+
+namespace Thread {
+namespace Logger {
+
+class MyLogger : public LoggerBase {
+private:
+	void output(const std::tm&, const std::string&, const std::string&) override;
+};
+
+void MyLogger::output(const std::tm& tm,
+                      const std::string& level,
+                      const std::string& info) {
+    //tm 时间文件
+    //level 日志等级
+    //info 传入的日志信息
+    //此处对于多个日志类对象非线程安全 注意
+}
+
+}
+}
+
+#endif // !_PROJECT_MY_LOGGER_H_
+```
