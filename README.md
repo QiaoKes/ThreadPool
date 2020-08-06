@@ -17,7 +17,7 @@
 ```  
 
 # logger
-基于模板模式的线程安全日志类
+基于单例模式、模板模式的线程安全日志类
 * 自定义日志等级
 * 支持控制台日志输出与本地日志保存
 * 支持自定义扩展日志输出方法
@@ -53,7 +53,7 @@ using namespace Thread::Logger;
 
 int main()
 {
-    ConsoleLogger Debug;
+    auto&& Debug = ConsoleLogger::get_instance();
     
     auto is_prime = [](int n)->bool {
         if(n <= 1) return false;
@@ -112,24 +112,25 @@ using namespace Thread::Logger;
 
 int main() 
 {	
-	//控制台日志
-	ConsoleLogger Debug;
-	//默认日志等级为debug
-	Debug() << "this is debug level " << "test finished";
-	//指定日至等级
-	Debug(Level::Info) << "this is Info level " << "test finished";
+    //控制台日志
+    auto&& Debug = ConsoleLogger::get_instance();
+    //默认日志等级为debug
+    Debug() << "this is debug level " << "test finished";
+    //指定日至等级
+    Debug(Level::Info) << "this is Info level " << "test finished";
 
-	//默认日志文件名为 当前时间.log
-	FileLogger FL1;
-	//自定义日志名 默认会去掉非法字符
-	FileLogger FL2("TEST.log");
+    //默认日志文件名为 当前时间.log
+    auto&& FL1 = FileLogger::get_instance();
+    //自定义日志名 默认会去掉非法字符
+    //注意：如果调用了有参构造和无参构造会根据构造函数的数量产生多个个实例，
+    //这是由于模板函数的特性导致的。It's not a bug, it's a feature.
+    auto&& FL2 = FileLogger::get_instance("TEST.log");
+    //默认日志等级为debug
+    FL1() << "this is debug level " << "test finished";
+    //指定日至等级
+    FL1(Level::Info) << "this is Info level " << "test finished";
 
-	//默认日志等级为debug
-	FL1() << "this is debug level " << "test finished";
-	//指定日至等级
-	FL1(Level::Info) << "this is Info level " << "test finished";
-
-	return 0;
+    return 0;
 }
 
 
@@ -150,9 +151,10 @@ int main()
 namespace Thread {
 namespace Logger {
 
-class MyLogger : public LoggerBase {
+class MyLogger : public BaseLogger<MyLogger> {
+    friend class BaseLogger<MyLogger>;
 private:
-	void output(const std::tm&, const std::string&, const std::string&) override;
+    void output(const std::tm&, const std::string&, const std::string&) override;
 };
 
 void MyLogger::output(const std::tm& tm,
@@ -161,7 +163,6 @@ void MyLogger::output(const std::tm& tm,
     //tm 时间文件
     //level 日志等级
     //info 传入的日志信息
-    //此处对于多个日志类对象非线程安全 注意
 }
 
 }
