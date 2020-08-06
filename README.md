@@ -154,6 +154,8 @@ namespace Logger {
 class MyLogger : public BaseLogger<MyLogger> {
     friend class BaseLogger<MyLogger>;
 private:
+	MyLogger()  = default;
+	~MyLogger() = default;
     void output(const std::tm&, const std::string&, const std::string&) override;
 };
 
