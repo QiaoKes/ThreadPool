@@ -9,7 +9,7 @@ using namespace Thread::Logger;
 
 int main()
 {
-    ConsoleLogger Debug;
+    auto&& Debug = ConsoleLogger::get_instance();
     
     auto is_prime = [](int n)->bool {
         if(n <= 1) return false;
