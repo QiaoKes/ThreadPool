@@ -17,7 +17,7 @@
 ```  
 
 # logger
-基于单例模式、模板模式的线程安全日志类
+基于单例模式、模板模式、奇异递归模板模式的线程安全日志类
 * 自定义日志等级
 * 支持控制台日志输出与本地日志保存
 * 支持自定义扩展日志输出方法
@@ -156,7 +156,7 @@ class MyLogger : public BaseLogger<MyLogger> {
 private:
     MyLogger()  = default;
     ~MyLogger() = default;
-    void output(const std::tm&, const std::string&, const std::string&) override;
+    void output(const std::tm&, const std::string&, const std::string&);
 };
 
 void MyLogger::output(const std::tm& tm,
