@@ -44,7 +44,7 @@ template<typename T>
 class BaseLogger {
     friend class LoggerStream<T>;
 public:
-    virtual LoggerStream<T> operator()(Level level = Level::Debug);
+    LoggerStream<T> operator()(Level level = Level::Debug);
 
     template<typename... Args>
     static T& get_instance(Args&&... args);
@@ -53,11 +53,10 @@ protected:
     BaseLogger() = default;
     BaseLogger(BaseLogger&) = delete;
     BaseLogger& operator=(const BaseLogger&) = delete;
-    virtual ~BaseLogger() = default;
+    ~BaseLogger() = default;
 private:
     std::tm get_local_time();
     void end_line(Level, const std::string&);
-    virtual void output(const std::tm&, const std::string&, const std::string&) = 0;
 private:
     std::mutex   _mtx;
     std::tm      _localtime;
@@ -68,7 +67,7 @@ class ConsoleLogger : public BaseLogger<ConsoleLogger> {
     friend class BaseLogger<ConsoleLogger>;
 private:
     ConsoleLogger() = default;
-    void output(const std::tm&, const std::string&, const std::string&) override;
+    void output(const std::tm&, const std::string&, const std::string&);
     ~ConsoleLogger() = default;
 };
 
@@ -76,7 +75,7 @@ class FileLogger : public BaseLogger<FileLogger> {
     friend class BaseLogger<FileLogger>;
 private:
     FileLogger(const std::string& fn = "create_at_" __DATE__ "_" __TIME__ ".log");
-    void output(const std::tm&, const std::string&, const std::string&) override;
+    void output(const std::tm&, const std::string&, const std::string&);
     ~FileLogger();
 private:
     std::ofstream _file;
@@ -135,7 +134,7 @@ void BaseLogger<T>::end_line(Level level, const std::string& info) {
     std::unique_lock<std::mutex> lock(_mtx);
     auto local_time = get_local_time();
     auto level_str = lmap.find(level)->second;
-    output(local_time, level_str, info);
+    static_cast<T*>(this)->output(local_time, level_str, info);
 }
 
 }
